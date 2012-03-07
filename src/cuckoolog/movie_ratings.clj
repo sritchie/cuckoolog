@@ -82,14 +82,13 @@
       (>= ?raters min-raters)
       (c/count ?raters)))
 
-(def prod-squares
+(def rating-metrics
   "Predicate macro. Accepts two ratings and returns a number of
    metrics based on the rating values."
   (<- [?ra ?rb :> ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq]
       (* ?ra ?rb :> ?prod)
       (square-xs ?ra ?rb :> ?ra-sq ?rb-sq)
-      (c/sum ?prod ?ra ?rb ?ra-sq ?rb-sq
-             :> ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq)))
+      (c/sum ?prod ?ra ?rb ?ra-sq ?rb-sq :> ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq)))
 
 (defn joined-query
   "Accepts a generator of <user, item, rating> and returns a subquery
@@ -97,12 +96,12 @@
   at least one user."
   [src min-intersection]
   (<- [?item-a ?item-b ?size ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq]
-      (src ?user ?item-a ?ra)
-      (src ?user ?item-b ?rb)
+      (src ?user ?item-a ?rating-a)
+      (src ?user ?item-b ?rating-b)
       (less? ?item-a ?item-b)
       (>= ?size min-intersection)
-      (prod-squares ?ra ?rb :> ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq)
-      (c/count ?size)))
+      (rating-metrics ?rating-a ?rating-b :> ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq)
+      (c/count ?intersection)))
 
 (defn movie-ratings
   [joined-src rater-src prior-count prior-corr]
