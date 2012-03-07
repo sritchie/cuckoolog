@@ -115,9 +115,17 @@
                     :> ?corr ?reg-corr ?cos-sim ?jaccard)
       (:distinct false)))
 
+(def defaults
+  {:prior-count 0
+   :prior-correlation 10
+   :min-raters 3
+   :max-raters 10000
+   :min-intersection 50})
+
 (defn -main
   [input-path output-path & {:as opts}]
-  (let [{:keys [min-intersection min-raters max-raters prior-count prior-corr]} (merge defaults opts)
+  (let [{:keys [min-intersection min-raters
+                max-raters prior-count prior-corr]} (merge defaults opts)
         text-src   (hfs-textline input-path)
         rating-src (<- [?user ?item ?rating]
                        (text-src ?textline)
