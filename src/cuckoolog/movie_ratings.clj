@@ -104,8 +104,6 @@
       (prod-squares ?ra ?rb :> ?dot-prod ?ra-sum ?rb-sum ?ra-norm-sq ?rb-norm-sq)
       (c/count ?size)))
 
-;; I think I can handle these defaults a bit better. Still thinking.
-
 (defn movie-ratings
   [joined-src rater-src prior-count prior-corr]
   (<- [?item-a ?item-b ?corr ?reg-corr ?cos-sim ?jaccard ?size ?a-raters ?b-raters]
